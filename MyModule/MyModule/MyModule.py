@@ -271,9 +271,9 @@ class MyModuleLogic(ScriptedLoadableModuleLogic):
         else:
             modelNode.GetDisplayNode().SetVisibility(0)  # hide
 
-    def updateModelOpacity(self, inputModel, opacityValue_norm):
+    def updateSegmentOpacity(self, inputModel, opacityValue_norm):
 
-        inputModel.GetDisplayNode().SetOpacity(opacityValue_norm)
+        inputModel.GetDisplayNode().SetOpacity3D(opacityValue_norm)
 
     def loadModel1Button(self):
 
@@ -311,7 +311,7 @@ class MyModuleLogic(ScriptedLoadableModuleLogic):
         opacityValue_norm = opacityValue / 100.0
         print(opacityValue_norm)
 
-        self.updateModelOpacity(model1, opacityValue_norm)  # Update model opacity
+        self.updateSegmentOpacity(model1, opacityValue_norm)  # Update model opacity
 
     def opacityValueSliderWidget2Changed(self, opacityValue):
 
@@ -321,7 +321,7 @@ class MyModuleLogic(ScriptedLoadableModuleLogic):
         opacityValue_norm = opacityValue / 100.0
         print(opacityValue_norm)
 
-        self.updateModelOpacity(model2, opacityValue_norm)  # Update model opacity
+        self.updateSegmentOpacity(model2, opacityValue_norm)  # Update model opacity
 
     def diceCoeff(self):
 
