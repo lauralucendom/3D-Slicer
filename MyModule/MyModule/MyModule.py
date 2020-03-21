@@ -126,9 +126,7 @@ class MyModuleWidget(ScriptedLoadableModuleWidget):
         # Create horizontal section
         modelVisibilityLayout_1 = qt.QHBoxLayout()
         modelVisibility_GroupBox_Layout.addRow(modelVisibilityLayout_1)  # insert section in current layout
-        modelVisibilityLayout_2 = qt.QHBoxLayout()
-        modelVisibility_GroupBox_Layout.addRow(modelVisibilityLayout_2)  # insert section in current layout
-
+        
         # Show or Hide Model 1 in 3D scene
         self.model1_checkBox = qt.QCheckBox('Model 1')  # text in checkbox
         self.model1_checkBox.checked = True  # if True it is initially checked
@@ -139,7 +137,7 @@ class MyModuleWidget(ScriptedLoadableModuleWidget):
         self.model2_checkBox = qt.QCheckBox('Model 2')  # text in checkbox
         self.model2_checkBox.checked = True  # if True it is initially checked
         self.model2_checkBox.checked = True  # if True it can be checked
-        modelVisibilityLayout_2.addWidget(self.model2_checkBox)  # add checkbox to layout
+        modelVisibilityLayout_1.addWidget(self.model2_checkBox)  # add checkbox to layout
 
         #
         # Model transparency layout
