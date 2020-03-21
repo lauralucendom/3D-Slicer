@@ -204,8 +204,7 @@ class MyModuleWidget(ScriptedLoadableModuleWidget):
         self.opacityValueSliderWidget_1.connect("valueChanged(double)", self.onOpacityValueSliderWidget1Changed)
         self.opacityValueSliderWidget_2.connect("valueChanged(double)", self.onOpacityValueSliderWidget2Changed)
 
-        #self.applyTransformButton.connect('clicked(bool)', self.onApplyTransformButton)
-        #self.undoTransformButton.connect('clicked(bool)', self.onUndoTransformButton)
+        self.alignModelsButton.connect('clicked(bool)', self.onAlignModelsButton)
 
         self.diceCoeffButton.connect('clicked(bool)', self.onDiceCoeffButton)
         self.hausDistButton.connect('clicked(bool)', self.onHausdorffDistButton)
@@ -239,8 +238,13 @@ class MyModuleWidget(ScriptedLoadableModuleWidget):
     def onOpacityValueSliderWidget2Changed(self, opacityValue):
         self.logic.opacityValueSliderWidget2Changed(opacityValue)
 
-    def onUndoTransformButton(self):
-        self.logic.undoTransform()
+    def onAlignModelsButton(self):
+        
+        # Align models
+        self.logic.alignModels()
+
+        # Update GUI
+        self.alignModelsButton.enabled = False
 
     def onDiceCoeffButton(self):
         self.logic.diceCoeff()
@@ -305,6 +309,27 @@ class MyModuleLogic(ScriptedLoadableModuleLogic):
         
         return (success1 and success2)
 
+    def alignModels(self):
+
+        # Rotation
+        self.alignmentTransform = slicer.vtkMRMLLinearTransformNode()
+        self.alignmentTransform.SetName("alignmentTransform")
+        slicer.mrmlScene.AddNode(self.alignmentTransform)
+
+        # Create transformation matrix
+        rotMatrix = vtk.vtkTransform()
+        rotMatrix.RotateZ(-180.0) 
+        self.alignmentTransform.SetMatrixTransformToParent(rotMatrix.GetMatrix())
+
+        # Build transform tree
+        self.model2.SetAndObserveTransformNodeID(self.alignmentTransform.GetID())
+
+        # Harden transform
+        self.model2.HardenTransform()
+
+        # Delete transform from scene
+        slicer.mrmlScene.RemoveNode(self.alignmentTransform)
+        
     def model1VisibilityChecked(self,checked):
 
         model1 = slicer.util.getNode('Liver1')
