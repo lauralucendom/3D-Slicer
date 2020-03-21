@@ -296,6 +296,12 @@ class MyModuleLogic(ScriptedLoadableModuleLogic):
         
         # Model 2
         [success2, self.model2] = self.loadModelFromFile(self.model2_path, [0, 1, 0], True)  # call function from logic
+
+        # Center 3D view
+        layoutManager = slicer.app.layoutManager()
+        threeDWidget = layoutManager.threeDWidget(0)
+        threeDView = threeDWidget.threeDView()
+        threeDView.resetFocalPoint() 
         
         return (success1 and success2)
 
