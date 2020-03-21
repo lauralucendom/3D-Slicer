@@ -50,17 +50,25 @@ class MyModuleWidget(ScriptedLoadableModuleWidget):
         self.layout.addWidget(collapsibleButtonLoad)
         formLayout_load = qt.QFormLayout(collapsibleButtonLoad)
 
-        # Button to load model 1
-        self.loadModel1Button = qt.QPushButton("LOAD MODEL 1")  # text in button
-        self.loadModel1Button.toolTip = "Load model 1"  # hint text for button (appears when cursor is above the button for more than one second)
-        self.loadModel1Button.enabled = True  # if True it can be clicked
-        formLayout_load.addRow(self.loadModel1Button)  # include button in layout
+        # Model 1 Selector
+        self.model1_pathSelector = ctk.ctkPathLineEdit()
+        self.model1_pathSelector.enabled = True
+        self.model1_pathSelector.setMaximumWidth(400)
+        self.model1_pathSelector.currentPath = slicer.modules.mymodule.path.replace("MyModule.py","") + 'Data/Liver1.stl' 
+        formLayout_load.addRow("Model 1: ", self.model1_pathSelector)    
 
-        # Button to load model 2
-        self.loadModel2Button = qt.QPushButton("LOAD MODEL 2")  # text in button
-        self.loadModel2Button.toolTip = "Load model 2"  # hint text for button (appears when cursor is above the button for more than one second)
-        self.loadModel2Button.enabled = True  # if True it can be clicked
-        formLayout_load.addRow(self.loadModel2Button)  # include button in layout
+        # Model 1 Selector
+        self.model2_pathSelector = ctk.ctkPathLineEdit()
+        self.model2_pathSelector.enabled = True
+        self.model2_pathSelector.setMaximumWidth(400)
+        self.model2_pathSelector.currentPath = slicer.modules.mymodule.path.replace("MyModule.py","") + 'Data/Liver1beforeMM.stl' 
+        formLayout_load.addRow("Model 2: ", self.model2_pathSelector)    
+
+        # Button to load models
+        self.loadModelsButton = qt.QPushButton("LOAD MODELS AS SEGMENTS")  # text in button
+        self.loadModelsButton.toolTip = "Load models as segments"  # hint text for button (appears when cursor is above the button for more than one second)
+        self.loadModelsButton.enabled = True  # if True it can be clicked
+        formLayout_load.addRow(self.loadModelsButton)  # include button in layout
 
         #
         # ALIGNMENT
@@ -187,10 +195,8 @@ class MyModuleWidget(ScriptedLoadableModuleWidget):
         # ------ 2. CONNECT BUTTONS WITH FUNCTIONS ------
 
         # Connect each button with a function
-        self.loadModel1Button.connect('clicked(bool)',
-                                      self.onLoadModel1Button)  # when the button is pressed we call the function onLoadModel1Button
-        self.loadModel2Button.connect('clicked(bool)',
-                                      self.onLoadModel2Button)  # when the button is pressed we call the function onLoadModel2Button
+        self.loadModelsButton.connect('clicked(bool)',
+                                      self.onLoadModelsButton)  # when the button is pressed we call the function onLoadModel1Button
 
         self.model1_checkBox.connect('stateChanged(int)', self.onModel1VisibilityChecked)
         self.model2_checkBox.connect('stateChanged(int)', self.onModel2VisibilityChecked)
@@ -206,11 +212,20 @@ class MyModuleWidget(ScriptedLoadableModuleWidget):
 
     # ------ 3. DEFINITION OF FUNCTIONS CALLED WHEN PRESSING THE BUTTONS ------
 
-    def onLoadModel1Button(self):
-        self.logic.loadModel1Button()
+    def onLoadModelsButton(self):
 
-    def onLoadModel2Button(self):
-        self.logic.loadModel2Button()
+        # Get inputs
+        self.logic.model1_path = self.model1_pathSelector.currentPath
+        self.logic.model2_path = self.model2_pathSelector.currentPath
+            
+        # Load models as segments
+        success = self.logic.loadModels()
+
+        # Update GUI
+        if success: # if models are loaded correctly, then button and selectors are disabled
+            self.model1_pathSelector.enabled = False
+            self.model2_pathSelector.enabled = False
+            self.loadModelsButton.enabled = False
 
     def onModel1VisibilityChecked(self, checked):
         self.logic.model1VisibilityChecked(checked)
@@ -241,6 +256,10 @@ class MyModuleLogic(ScriptedLoadableModuleLogic):
 
     def __init__(self):
 
+        # Model paths
+        self.model1_path = ''
+        self.model2_path = ''
+
         self.applyTransformButton = qt.QPushButton("Apply transform")
         self.undoTransformButton = qt.QPushButton("Undo Transform")
         print('')
@@ -248,19 +267,16 @@ class MyModuleLogic(ScriptedLoadableModuleLogic):
         self.model1 = None
         self.model2 = None
 
-    def loadModelFromFile(self, modelFilePath, modelFileName, colorRGB_array, visibility_bool):
-
-        try:
-            node = slicer.util.getNode(modelFileName)
-        except:
-            [success, node] = slicer.util.loadSegmentation(modelFilePath + '/' + modelFileName + '.stl', returnNode=True) # model loading as segment
-            if success:
-                node.GetDisplayNode().SetColor(colorRGB_array)
-                node.GetDisplayNode().SetVisibility(visibility_bool)
-                print(modelFileName + ' model loaded')
-            else:
-                print('ERROR: ' + modelFileName + ' model not found in path')
-        return node
+    def loadModelFromFile(self, modelFilePath, colorRGB_array, visibility_bool):
+        
+        [success, node] = slicer.util.loadSegmentation(modelFilePath, returnNode=True) # model loading as segment
+        if success:
+            node.GetDisplayNode().SetColor(colorRGB_array)
+            node.GetDisplayNode().SetVisibility(visibility_bool)
+            print(node.GetName() + ' model loaded')
+        else:
+            print('ERROR: model not found in path')
+        return (success, node)
 
     def updateVisibility(self, modelNode, show):
 
@@ -273,23 +289,15 @@ class MyModuleLogic(ScriptedLoadableModuleLogic):
 
         inputModel.GetDisplayNode().SetOpacity3D(opacityValue_norm)
 
-    def loadModel1Button(self):
+    def loadModels(self):
 
-        model_name = 'Liver1'  # indicate name of model to be loaded
-        data_path = slicer.modules.mymodule.path.replace("MyModule.py",
-                                                         "") + 'Data/'  # indicate the path from which we want to load the model
-        self.loadModelFromFile(data_path, model_name, [1, 0, 0], True)  # call function from logic
-        model1 = slicer.util.getNode('Liver1')  # retrieve Model1
-        self.model1 = model1
-
-    def loadModel2Button(self):
-
-        model_name = 'Liver1beforeMM'  # indicate name of model to be loaded
-        data_path = slicer.modules.mymodule.path.replace("MyModule.py",
-                                                         "") + 'Data/'  # indicate the path from which we want to load the model
-        self.loadModelFromFile(data_path, model_name, [1, 0, 0], True)  # call function from logic
-        model2 = slicer.util.getNode('Liver1beforeMM')  # retrieve Model2
-        self.model2 = model2
+        # Model 1
+        [success1, self.model1] = self.loadModelFromFile(self.model1_path, [1, 0, 0], True)  # call function from logic
+        
+        # Model 2
+        [success2, self.model2] = self.loadModelFromFile(self.model2_path, [0, 1, 0], True)  # call function from logic
+        
+        return (success1 and success2)
 
     def model1VisibilityChecked(self,checked):
 
