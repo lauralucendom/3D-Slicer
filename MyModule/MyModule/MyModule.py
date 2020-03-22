@@ -372,8 +372,8 @@ class MyModuleLogic(ScriptedLoadableModuleLogic):
         slicer.mrmlScene.AddNode(self.tableD)
         self.segCompNode.SetAndObserveDiceTableNode(self.tableD)
         
-        # Display Dice Coefficient Table (Four Up Table View)
-        slicer.app.layoutManager().setLayout(slicer.vtkMRMLLayoutNode.SlicerLayoutFourUpTableView)
+        # Display Dice Coefficient Table (3D Table View)
+        slicer.app.layoutManager().setLayout(slicer.vtkMRMLLayoutNode.SlicerLayout3DTableView)
         slicer.app.applicationLogic().GetSelectionNode().SetReferenceActiveTableID(self.tableD.GetID())
         slicer.app.applicationLogic().PropagateTableSelection()
 
@@ -402,8 +402,8 @@ class MyModuleLogic(ScriptedLoadableModuleLogic):
         slicer.mrmlScene.AddNode(self.tableH)
         self.segCompnode.SetAndObserveHausdorffTableNode(self.tableH)
         
-        # Display Hausdorff Distance Table (Four Up Table View)
-        slicer.app.layoutManager().setLayout(slicer.vtkMRMLLayoutNode.SlicerLayoutFourUpTableView)
+        # Display Hausdorff Distance Table (3D Table View)
+        slicer.app.layoutManager().setLayout(slicer.vtkMRMLLayoutNode.SlicerLayout3DTableView)
         slicer.app.applicationLogic().GetSelectionNode().SetReferenceActiveTableID(self.tableH.GetID())
         slicer.app.applicationLogic().PropagateTableSelection()
 
