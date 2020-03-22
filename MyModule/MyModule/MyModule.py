@@ -371,6 +371,11 @@ class MyModuleLogic(ScriptedLoadableModuleLogic):
         self.tableD.SetName("Sorensen-Dice Coefficient")
         slicer.mrmlScene.AddNode(self.tableD)
         self.segCompNode.SetAndObserveDiceTableNode(self.tableD)
+        
+        # Display Dice Coefficient Table (Four Up Table View)
+        slicer.app.layoutManager().setLayout(slicer.vtkMRMLLayoutNode.SlicerLayoutFourUpTableView)
+        slicer.app.applicationLogic().GetSelectionNode().SetReferenceActiveTableID(self.tableD.GetID())
+        slicer.app.applicationLogic().PropagateTableSelection()
 
         # Calculation of the Dice Index
         slicer.modules.segmentcomparison.logic().ComputeDiceStatistics(self.segCompNode)
@@ -396,6 +401,11 @@ class MyModuleLogic(ScriptedLoadableModuleLogic):
         self.tableH.SetName("Hausdorff Distance")
         slicer.mrmlScene.AddNode(self.tableH)
         self.segCompnode.SetAndObserveHausdorffTableNode(self.tableH)
+        
+        # Display Hausdorff Distance Table (Four Up Table View)
+        slicer.app.layoutManager().setLayout(slicer.vtkMRMLLayoutNode.SlicerLayoutFourUpTableView)
+        slicer.app.applicationLogic().GetSelectionNode().SetReferenceActiveTableID(self.tableH.GetID())
+        slicer.app.applicationLogic().PropagateTableSelection()
 
         # Calculation of the Hausdorff Distance
         slicer.modules.segmentcomparison.logic().ComputeHausdorffDistances(self.segCompnode)
