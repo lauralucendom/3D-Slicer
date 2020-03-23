@@ -379,6 +379,12 @@ class MyModuleLogic(ScriptedLoadableModuleLogic):
 
         # Calculation of the Dice Index
         slicer.modules.segmentcomparison.logic().ComputeDiceStatistics(self.segCompNode)
+        
+        # Save table in a CSV file
+        storagenode = self.tableD.CreateDefaultStorageNode()
+        storagenode.SetFileName("dice.csv")
+        storagenode.WriteData(self.tableD)
+
 
 
     def hausdorffDist(self):
@@ -409,5 +415,11 @@ class MyModuleLogic(ScriptedLoadableModuleLogic):
 
         # Calculation of the Hausdorff Distance
         slicer.modules.segmentcomparison.logic().ComputeHausdorffDistances(self.segCompnode)
+        
+        # Save table in a CSV file
+        storagenode = self.tableH.CreateDefaultStorageNode()
+        storagenode.SetFileName("hausdorff.csv")
+        storagenode.WriteData(self.tableH)
+
 
 
