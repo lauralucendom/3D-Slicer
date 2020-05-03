@@ -420,6 +420,57 @@ class MyModuleLogic(ScriptedLoadableModuleLogic):
         storagenode = self.tableH.CreateDefaultStorageNode()
         storagenode.SetFileName("hausdorff.csv")
         storagenode.WriteData(self.tableH)
+      
+    def showColorMap(self):
+    
+        # Get PolyData from Segment 1
+        self.segment1.CreateClosedSurfaceRepresentation();
+        ss1 = self.segment1.GetSegmentation();
+        str1 = ss1.GetNthSegmentID(0);
+        pl1 = vtk.vtkPolyData()
+        pl1 = self.segment1.GetClosedSurfaceRepresentation(str1)
+
+        # Get PolyData from Segment 2
+        self.segment2.CreateClosedSurfaceRepresentation();
+        ss2 = self.segment2.GetSegmentation();
+        str2 = ss2.GetNthSegmentID(0);
+        pl2 = vtk.vtkPolyData()
+        pl2 = self.segment2.GetClosedSurfaceRepresentation(str2)
+
+        # Compute distance
+        distanceFilter = vtk.vtkDistancePolyDataFilter()
+        distanceFilter.SetInputData(0, pl1)
+        distanceFilter.SetInputData(1, pl2)
+        distanceFilter.SignedDistanceOff()
+        distanceFilter.Update()
+
+        # Center 3D view
+        slicer.app.layoutManager().tableWidget(0).setVisible(False)
+        layoutManager = slicer.app.layoutManager()
+        threeDWidget = layoutManager.threeDWidget(0)
+        threeDView = threeDWidget.threeDView()
+        threeDView.resetFocalPoint()
+
+        #Output model
+        model = slicer.vtkMRMLModelNode()
+        slicer.mrmlScene.AddNode(model)
+        model.SetName('DistanceModelNode')
+        model.SetAndObservePolyData(distanceFilter.GetOutput())
+        display = slicer.vtkMRMLModelDisplayNode()
+        slicer.mrmlScene.AddNode(display)
+        model.SetAndObserveDisplayNodeID(display.GetID())
+        display.SetActiveScalarName('Distance')
+        display.SetAndObserveColorNodeID('vtkMRMLColorTableNodeFileColdToHotRainbow.txt')
+        display.SetScalarVisibility(True)
+
+        [rmin,rmax] = display.GetScalarRange()
+        print(rmin)
+        print(rmax)
+
+        # Deactivate visibility of segments (deberia actualizarse el checkbox del GUI)
+        self.updateSegment1Visibility(False)
+        self.updateSegment2Visibility(False)
+
 
 
 
