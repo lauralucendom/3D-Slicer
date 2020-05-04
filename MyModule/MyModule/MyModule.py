@@ -209,6 +209,9 @@ class MyModuleWidget(ScriptedLoadableModuleWidget):
         self.diceCoeffButton.connect('clicked(bool)', self.onDiceCoeffButton)
         self.hausDistButton.connect('clicked(bool)', self.onHausdorffDistButton)
 
+        self.showColorMapButton.connect('clicked(bool)', self.onShowColorMapButton)
+
+
     # ------ 3. DEFINITION OF FUNCTIONS CALLED WHEN PRESSING THE BUTTONS ------
 
     def onloadSegmentsButton(self):
@@ -251,6 +254,10 @@ class MyModuleWidget(ScriptedLoadableModuleWidget):
 
     def onHausdorffDistButton(self):
         self.logic.hausdorffDist()
+
+    def onShowColorMapButton(self):
+    	print('Computing color map...')
+    	self.logic.showColorMap()
 
 #
 # MyModule LOGIC: Definition of the logic in the module
