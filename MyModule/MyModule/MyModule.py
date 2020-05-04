@@ -10,7 +10,7 @@ try:
 	segmentComparisonModule = slicer.modules.segmentcomparison
 except:
 	print('ERROR: SlicerRT extension is required to use this module.')
-	logging.info('ERROR: SlicerRT extension is required to use this module.')
+	logging.error('ERROR: SlicerRT extension is required to use this module.')
 
 #
 # MyModule
