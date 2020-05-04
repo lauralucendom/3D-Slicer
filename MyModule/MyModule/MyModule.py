@@ -5,6 +5,12 @@ from slicer.ScriptedLoadableModule import *
 import logging
 import numpy as np
 
+# Check if SlicerRT extension is correctly installed
+try:
+	segmentComparisonModule = slicer.modules.segmentcomparison
+except:
+	print('ERROR: SlicerRT extension is required to use this module.')
+	logging.info('ERROR: SlicerRT extension is required to use this module.')
 
 #
 # MyModule
