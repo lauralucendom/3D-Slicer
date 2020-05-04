@@ -451,7 +451,7 @@ class MyModuleLogic(ScriptedLoadableModuleLogic):
         threeDView = threeDWidget.threeDView()
         threeDView.resetFocalPoint()
 
-        #Output model
+        # Output model
         model = slicer.vtkMRMLModelNode()
         slicer.mrmlScene.AddNode(model)
         model.SetName('DistanceModelNode')
@@ -467,7 +467,7 @@ class MyModuleLogic(ScriptedLoadableModuleLogic):
         print(rmin)
         print(rmax)
 
-        # Deactivate visibility of segments (deberia actualizarse el checkbox del GUI)
+        # Deactivate visibility of segments (deberia actualizarse el checkbox del GUI pero no lo consigo)
         self.updateSegment1Visibility(False)
         self.updateSegment2Visibility(False)
 
