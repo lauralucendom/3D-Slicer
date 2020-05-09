@@ -23,7 +23,7 @@ class MyModule(ScriptedLoadableModule):
         self.parent.title = "MyModule"
         self.parent.categories = ["Examples"]
         self.parent.dependencies = []
-        self.parent.contributors = ["Laura Lucendo Maranes"]
+        self.parent.contributors = ["Laura Lucendo Maranes, David Garcia Mato"]
         self.parent.helpText = """This code has been created with the aim of comparing masks obtained from two different softwares by getting important values such as Dice Index and Hausdorff Distance. Besides, a color map has been created to represent the sections which are similar in both masks and the ones qhich differ between masks"""
         self.parent.helpText += self.getDefaultModuleDocumentationLink()
         self.parent.acknowledgementText = """Universidad Carlos III"""
@@ -270,7 +270,7 @@ class MyModuleWidget(ScriptedLoadableModuleWidget):
 			self.segment1_pathSelector.enabled = False
 			self.segment2_pathSelector.enabled = False
 			self.loadSegmentsButton.enabled = False
-			
+
 	def onupdateSegment1Visibility(self, checked):
 		self.logic.updateSegment1Visibility(checked)
 
